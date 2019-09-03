@@ -70,6 +70,8 @@ static const struct of_device_id dsi_display_dt_match[] = {
 struct dsi_display *primary_display;
 
 static struct kernfs_node *dsi_link;
+static unsigned int timing_override;
+module_param(timing_override, uint, 0444);
 
 static void dsi_display_mask_ctrl_error_interrupts(struct dsi_display *display,
 			u32 mask, bool enable)
@@ -6973,6 +6975,11 @@ int dsi_display_get_modes(struct dsi_display *display,
 	dyn_clk_caps = &(display->panel->dyn_clk_caps);
 
 	timing_mode_count = display->panel->num_timing_nodes;
+	if (timing_override >= timing_mode_count) {
+		pr_warn("[%s] ignoring invalid cmdline timing override %d\n",
+			display->name, timing_override);
+		timing_override = 0;
+	}
 
 	for (mode_idx = 0; mode_idx < timing_mode_count; mode_idx++) {
 		struct dsi_display_mode display_mode;
@@ -6981,6 +6988,9 @@ int dsi_display_get_modes(struct dsi_display *display,
 		if (display->cmdline_timing == mode_idx)
 			topology_override = display->cmdline_topology;
 
+		if (mode_idx != timing_override)
+			continue;
+			
 		memset(&display_mode, 0, sizeof(display_mode));
 
 		rc = dsi_panel_get_mode(display->panel, mode_idx,
