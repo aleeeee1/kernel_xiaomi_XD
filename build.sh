@@ -62,9 +62,8 @@ default='\033[0m'
 # -----------------------------
 # Variable Definitions
 # -----------------------------
-CLANG_VER="clang-r522817"
-ROM_PATH="/mnt/QuickBoi/LineageOS/22"
-CLANG_DIR="$ROM_PATH/prebuilts/clang/host/linux-x86/$CLANG_VER"
+
+CLANG_DIR="/workspace/toolchains/neutron-clang"
 KERNEL_DIR="$PWD"
 Anykernel_DIR="$KERNEL_DIR/AnyKernel3/"
 DATE=$(date +"%d%m%Y")
